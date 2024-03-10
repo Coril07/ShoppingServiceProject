@@ -49,11 +49,9 @@ func (r *Repository) Update(newOrder Order) error {
 // 创建订单
 func (r *Repository) Create(ci *Order) error {
 	result := r.db.Create(ci)
-
 	if result.Error != nil {
 		return result.Error
 	}
-
 	return nil
 }
 

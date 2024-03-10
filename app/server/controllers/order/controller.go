@@ -4,6 +4,7 @@ import (
 	"app/server/domain/order"
 	"app/server/utils/api_helper"
 	"app/server/utils/pagination"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,9 +31,23 @@ func NewOrderController(orderService *order.Service) *Controller {
 // @Failure 400  {object} api_helper.ErrorResponse
 // @Router /order [post]
 func (c *Controller) CompleteOrder(g *gin.Context) {
+	var req CompleteOrderRequest
+	if err := g.ShouldBind(&req); err != nil {
+		fmt.Printf("err: %v\n", err)
+		api_helper.HandleError(g, err)
+		return
+	}
 	userId := api_helper.GetUserId(g)
-
-	err := c.orderService.CompleteOrder(userId)
+	var pids = []int64{}
+	for i := 0; i < len(req.PIDs); i++ {
+		val, err := req.PIDs[i].Int64()
+		if err != nil {
+			api_helper.HandleError(g, err)
+			return
+		}
+		pids = append(pids, val)
+	}
+	err := c.orderService.CompleteOrder(userId, pids)
 	if err != nil {
 		api_helper.HandleError(g, err)
 		return

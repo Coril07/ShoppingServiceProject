@@ -25,8 +25,8 @@ func NewService(
 	cartRepository cart.Repository,
 	cartItemRepository cart.ItemRepository,
 ) *Service {
-	orderRepository.Migration()
-	orderedItemRepository.Migration()
+	// orderRepository.Migration()
+	// orderedItemRepository.Migration()
 	return &Service{
 		orderRepository:       orderRepository,
 		orderedItemRepository: orderedItemRepository,
@@ -38,12 +38,12 @@ func NewService(
 }
 
 // 完成订单
-func (c *Service) CompleteOrder(userId uint) error {
+func (c *Service) CompleteOrder(userId uint, pids []int64) error {
 	currentCart, err := c.cartRepository.FindOrCreateByUserID(userId)
 	if err != nil {
 		return err
 	}
-	cartItems, err := c.cartItemRepository.GetItems(currentCart.UserID)
+	cartItems, err := c.cartItemRepository.GetSelectedItemsByPID(currentCart.ID, pids)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,13 @@ func (c *Service) CompleteOrder(userId uint) error {
 	}
 	orderedItems := make([]OrderedItem, 0)
 	for _, item := range cartItems {
-		orderedItems = append(orderedItems, *NewOrderedItem(item.Count, item.ProductID))
+		order_item := NewOrderedItem(item.Count, item.ProductID)
+		product, err := c.productRepository.FindByID(order_item.ProductID)
+		if err != nil {
+			return err
+		}
+		order_item.Product = *product
+		orderedItems = append(orderedItems, *order_item)
 	}
 	err = c.orderRepository.Create(NewOrder(userId, orderedItems))
 	return err

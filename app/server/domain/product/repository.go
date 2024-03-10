@@ -65,10 +65,29 @@ func (r *Repository) FindBySKU(sku string) (*Product, error) {
 	return product, nil
 }
 
+func (r *Repository) FindBySKUs(skus []string) ([]*Product, error) {
+	var products []*Product
+	err := r.db.Where("IsDeleted = ?", 0).Where("SKU in ?", skus).Find(&products).Error
+	if err != nil {
+		return nil, ErrProductNotFound
+	}
+	return products, nil
+}
+
 // 根据产品名查找
 func (r *Repository) FindByName(cname string) (*Product, error) {
 	var product *Product
 	err := r.db.Where("IsDeleted = ?", 0).Where(Product{Name: cname}).First(&product).Error
+	if err != nil {
+		return nil, ErrProductNotFound
+	}
+	return product, nil
+}
+
+// 根据产品号查找
+func (r *Repository) FindByID(pid uint) (*Product, error) {
+	var product *Product
+	err := r.db.Where("IsDeleted = ?", 0).Where("ID=?", pid).First(&product).Error
 	if err != nil {
 		return nil, ErrProductNotFound
 	}

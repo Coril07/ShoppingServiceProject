@@ -21,7 +21,7 @@
           <div class="card-header">
             <span>{{item.Name}}</span>
           </div>
-          <el-image :src="item.Url" lazy loading="lazy" fit="fill" class="proimg"></el-image>
+          <el-image :src="item.Url" lazy loading="eager" fit="fill" class="proimg"></el-image>
           <div class="card-footer">{{item.Price}}円</div>
         </div>
           </div>
@@ -164,8 +164,10 @@ const handlePageChange = (val: number) => {
 
 const handlechange=(pane: TabsPaneContext, ev: Event)=>{
   var categoryname=activeName.value
-  page_id=1
-  tag=true
+  if(page_id!=1){
+    page_id=1
+    tag=true
+  }
  updatePage({page:page_id,pageSize:pageSize.value,Cname:categoryname},true)
 }
 

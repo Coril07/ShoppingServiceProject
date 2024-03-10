@@ -20,17 +20,16 @@ func (order *Order) BeforeCreate(tx *gorm.DB) (err error) {
 
 	// 删除购物车中的所有商品项
 	// 通过购物车ID在数据库中删除购物车中的商品项
-	if err := tx.Where("CartID = ?", currentCart.ID).Unscoped().Delete(&cart.Item{}).Error; err != nil {
-		return err
-	}
-
-	// 删除当前购物车
-	// 从数据库中删除当前用户的购物车
-	if err := tx.Unscoped().Delete(&currentCart).Error; err != nil {
-		return err
-	}
-
-	return nil
+	tx.Transaction(func(tx *gorm.DB) error {
+		for i := 0; i < len(order.OrderedItems); i++ {
+			err = tx.Where("CartID = ?", currentCart.ID).Where("ProductID=?", order.OrderedItems[i].ProductID).Unscoped().Delete(&cart.Item{}).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return err
 }
 
 // BeforeSave 在保存订单项之前被调用

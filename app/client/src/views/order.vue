@@ -1,8 +1,8 @@
 <template>
-    <div id="cart">
+    <div id="order">
       <div id="cartbox">
         <div id="cartheader">
-          <div style="margin-left: 1.2rem;font-weight: bolder;">買い物かご（全部{{ }}）</div>
+          <div style="margin-left: 1.2rem;font-weight: bolder;">ご注文（全部{{ }}）</div>
         </div>
         <div id="cartbody">
           <div id="title">
@@ -11,31 +11,30 @@
             <div class="price">単価</div>
             <div class="amount">数量</div>
             <div class="fee">費用</div>
-            <div class="operate">操作</div>
+            <div class="time">購入時間</div>
           </div>
-          <div id="content" v-for="item in items">
+          <div class="content" v-for="item in items">
             <div class="isdeleted"><el-checkbox  size="large" style="margin-left: -3rem;" @change="HandleSeleted(item)" v-model="item.select" /></div>
+            <div v-for="sub in item.OrderedItems" style="margin-left: 8rem;">
             <div class="info" style="padding: 1rem;">
               <div class="productshow">
-                <el-image :src="item.Product.Url" lazy loading="eager" fit="fill" style="max-width: 10rem;"></el-image>
-                <div class="Name">{{item.Product.Name}}</div>
+                <el-image :src="sub.Product.Url" lazy loading="eager" fit="fill" style="max-width: 7rem;"></el-image>
+                <div class="Name">{{sub.Product.Name}}</div>
               </div>
           </div>
-            <div class="price">{{item.Product.Price}}</div>
-            <div class="amount"><el-input-number v-model="item.num" :min="1" :max="50" size="small" style="width: 5rem;" /></div>
-            <div class="fee">{{item.Product.Price*item.num}}</div>
-            <div class="operate">
-              <div></div>
-          </div>
+            <div class="price">{{sub.Product.Price}}</div>
+            <div class="amount"><el-input-number v-model="sub.Count" :min="1" :max="50" size="small" style="width: 5rem;" disabled /></div>
+            <div class="fee">{{sub.Product.Price*sub.Count}}</div>
+            <div class="time"></div>
+            </div>
+            <div>
+            <div class="fee" style="margin-left: 63rem;">{{item.TotalPrice}}</div>
+            <div class="time" style="margin-left: 3rem;">{{item.CreatedAt}}</div>
+        </div>
           </div>
         </div>
         <div id="cartfooter">
           <div id="deleteall" @click="DeleteSelectedItems">削除</div>
-          <div style="margin-left: 35rem; display: flex;align-items: center;width:40rem ;">
-          <div id="selected">選んだ商品数：{{selectcount}}</div>
-          <div id="totalfee" style="margin-left: 10rem;width: 10rem;">合計額：{{ totalfee }}円</div>
-          <el-button type="primary" @click="HandlePay" style="margin-left: 6rem;">決算</el-button>
-        </div>
         </div>
       </div>
   </div>
@@ -63,10 +62,15 @@
   color: red;
   text-decoration: underline;
 }
-#content{
+.content{
   cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0.1rem solid #e6e3e4;
+  background-color: #f5f5f5;
 }
-#content div{
+.content div{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,19 +105,14 @@ text-overflow: ellipsis;
 .fee{
   width: 10rem;
 }
-.operate{
+.time{
   width: 10rem;
 }
 #title{
   width: 100%;
   display: flex;
 }
-#content{
-  width: 100%;
-  display: flex;
-  border-bottom: 0.1rem solid #e6e3e4;
-  background-color: #f5f5f5;
-}
+
 #cartbox{
   background-color:white;
   width: 80rem;
@@ -134,7 +133,7 @@ text-overflow: ellipsis;
   display: flex;
   align-items: center;
 }
-  #cart{
+  #order{
     width: 93rem;
     display: flex;
     justify-content: center;
@@ -182,10 +181,11 @@ const selectcount=computed(()=>{
 })
 const HandleSeleted = (item) => {
   if(item.select==true){
-    selected_items.value.set(item.Product.Name,{SKU:item.Product.SKU,Ind:item.ind,PID:item.Product.ID}) 
+    selected_items.value.set(item.ID,item.ID) 
   }else{
-    selected_items.value.delete(item.Product.Name)
+    selected_items.value.delete(item.ID)
   }
+  console.log(selected_items)
 }
 const HandlePay = () => {
   var IDs=Array()
@@ -227,11 +227,12 @@ const HandlePay = () => {
 }
 
 const updatecart= () => {
-  axios.get('/api/cart/info')
+  axios.get('/api/order/get')
 .then((response) => {
   if(response.status==200){
     tag=false
-    items.value=response.data
+    items.value=response.data.items
+    console.log(items)
     for (let index = 0; index < items.value.length; index++) {
       items.value[index].select=ref(false)  
       items.value[index].num=ref(items.value[index].Count)  
@@ -263,7 +264,7 @@ const DeleteSelectedItems = () => {
     }
   )
     .then(() => {
-      axios.delete('/api/cart/delete',{
+      axios.delete('/api/order/delete',{
     params: {
       skus: skus
   },
@@ -298,12 +299,12 @@ const HandleAllSeleted = () => {
   if(selecttag.value==true){
     for (let index = 0; index < items.value.length; index++) {
     items.value[index].select=ref(true)
-    selected_items.value.set(items.value[index].Product.Name,{SKU:items.value[index].Product.SKU,Ind:index,PID:items.value[index].Product.ID}) 
+    selected_items.value.set(items.value[index].ID,items.value[index].ID) 
   }
   }else{
     for (let index = 0; index < items.value.length; index++) {
     items.value[index].select=ref(false)
-    selected_items.value.delete(items.value[index].Product.Name)
+    selected_items.value.delete(items.value[index].ID)
   }
   }
 }

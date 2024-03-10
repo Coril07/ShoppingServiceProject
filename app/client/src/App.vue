@@ -9,7 +9,7 @@
               <div class="el-icon-" id="shopping_cart"><ShoppingCart></ShoppingCart></div>
               <div>買い物かご</div>    
             </el-menu-item>
-            <el-menu-item index="2" v-show="!isadmin">ご注文</el-menu-item>
+            <el-menu-item index="/order" v-show="!isadmin">ご注文</el-menu-item>
             <el-menu-item index="/admin" v-show="isadmin">商品管理</el-menu-item>
             <el-sub-menu index="3" v-show="islogin"> 
               <template #title>会員メニュー</template>
@@ -37,6 +37,10 @@ var current=ref("0")
 var  islogin=computed(()=>{
   return gs.islogin
 })
+var  t=computed(()=>{
+  gs.activePath
+})
+
 
 var isadmin=computed(()=>{
   return gs.isadmin
@@ -68,7 +72,7 @@ onMounted(()=>{
     margin: 0;
 }
 #cbody{
-  background-color: #e1e5df;
+  background-color: #e6e3e4;
 }
 </style>
 <style scoped>

@@ -12,3 +12,13 @@ type ItemCartRequest struct {
 type CreateCategoryResponse struct {
 	Message string `json:"message"`
 }
+
+// DeleteItem请求参数
+type DeleteRequest struct {
+	SKUs []string `json:"skus" form:"skus"`
+}
+
+// DeleteItem响应
+type DeleteResponse struct {
+	Message string `json:"message"`
+}

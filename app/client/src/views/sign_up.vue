@@ -63,7 +63,7 @@
 }
 </style>
 <script lang="ts" setup>
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import { ref} from 'vue';
 
 import axios from 'axios';
@@ -94,7 +94,14 @@ var new_user = reactive({
   email: '',
   address: ''
 })
+import { global_state } from '@/store';
 
+var gs=global_state()
+
+onMounted(()=>{
+  let activePath = router.currentRoute.value.path;
+  gs.activePath=activePath
+})
 function isEmail(email:string) {
   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   return emailRegex.test(email);

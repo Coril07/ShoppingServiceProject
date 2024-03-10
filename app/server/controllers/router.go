@@ -69,7 +69,7 @@ func RegisterHandlers(r *gin.Engine) {
 	RegisterCategoryHandlers(r, dbs)
 	RegisterCartHandlers(r, dbs)
 	RegisterProductHandlers(r, dbs)
-	// RegisterOrderHandlers(r, dbs)
+	RegisterOrderHandlers(r, dbs)
 }
 
 func RegisterStaticFiles(r *gin.Engine, s string) {
@@ -109,8 +109,9 @@ func RegisterCartHandlers(r *gin.Engine, dbs Databases) {
 	cartController := cartApi.NewCartController(cartService)
 	cartGroup := r.Group("/cart", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey))
 	cartGroup.POST("/item", cartController.AddItem)
-	// cartGroup.PATCH("/item", cartController.UpdateItem)
-	cartGroup.GET("/", cartController.GetCart)
+	cartGroup.PATCH("/item", cartController.UpdateItem)
+	cartGroup.GET("/info", cartController.GetCart)
+	cartGroup.DELETE("/delete", cartController.DeleteCart)
 }
 
 // 注册商品控制器
@@ -138,7 +139,7 @@ func RegisterOrderHandlers(r *gin.Engine, dbs Databases) {
 		*dbs.cartItemRepository)
 	productController := orderApi.NewOrderController(orderService)
 	orderGroup := r.Group("/order", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey))
-	orderGroup.POST("", productController.CompleteOrder)
-	orderGroup.DELETE("", productController.CancelOrder)
-	orderGroup.GET("", productController.GetOrders)
+	orderGroup.POST("/pay", productController.CompleteOrder)
+	orderGroup.DELETE("/delete", productController.CancelOrder)
+	orderGroup.GET("/get", productController.GetOrders)
 }

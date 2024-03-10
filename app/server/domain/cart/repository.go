@@ -3,6 +3,7 @@ package cart
 import (
 	"app/server/domain/user"
 	"errors"
+	"fmt"
 	"log"
 
 	"gorm.io/gorm"
@@ -111,6 +112,21 @@ func (r *ItemRepository) Create(ci *Item) error {
 	return nil
 }
 
+func (r *ItemRepository) GetSelectedItemsByPID(cartId uint, pids []int64) ([]Item, error) {
+	var cartItems []Item
+	err := r.db.Where(&Item{CartID: cartId}).Where("ProductID in ?", pids).Find(&cartItems).Error
+	if err != nil {
+		return nil, err
+	}
+	for i, item := range cartItems {
+		err := r.db.Model(item).Association("Product").Find(&cartItems[i].Product)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return cartItems, nil
+}
+
 // 返回购物车中所有item
 func (r *ItemRepository) GetItems(cartId uint) ([]Item, error) {
 	var cartItems []Item
@@ -125,4 +141,11 @@ func (r *ItemRepository) GetItems(cartId uint) ([]Item, error) {
 		}
 	}
 	return cartItems, nil
+}
+
+func (r *ItemRepository) DeleteByProductID(userId uint, pid uint) int64 {
+	res := r.db.Where("ProductID=?", pid).Delete(&Item{})
+	fmt.Printf("res: %v\n", res)
+	rows := res.RowsAffected
+	return rows
 }

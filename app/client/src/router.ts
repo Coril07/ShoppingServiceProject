@@ -6,6 +6,7 @@ import log_out from "./views/log_out.vue";
 import admin from "./views/admin.vue";
 import product from "./views/product.vue";
 import cart from "./views/cart.vue";
+import order from "./views/order.vue";
 const routes = [
   {
     path: "/",
@@ -35,6 +36,10 @@ const routes = [
     path: "/cart",
     component: cart,
   },
+  {
+    path: "/order",
+    component: order,
+  }
 ];
 
 const router = createRouter({

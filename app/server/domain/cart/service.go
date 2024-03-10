@@ -36,11 +36,9 @@ func (c *Service) AddItem(userID uint, sku string, count int) error {
 		return err
 	}
 	_, err = c.cartItemRepository.FindByID(currentProduct.ID, currentCart.ID)
-	fmt.Printf("err: %v\n", err)
 	if err == nil {
 		return ErrItemAlreadyExistInCart
 	}
-	fmt.Printf("count: %v\n", count)
 	if currentProduct.StockCount < count {
 		return product.ErrProductStockIsNotEnough
 	}
@@ -48,8 +46,6 @@ func (c *Service) AddItem(userID uint, sku string, count int) error {
 	if count <= 0 {
 		return ErrCountInvalid
 	}
-	fmt.Printf("currentCart: %v\n", currentCart)
-	fmt.Printf("count: %v\n", count)
 	err = c.cartItemRepository.Create(NewCartItem(currentProduct.ID, currentCart.ID, count))
 
 	return err
@@ -89,4 +85,17 @@ func (c *Service) GetCartItems(userId uint) ([]Item, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+// 删除商品
+func (c *Service) DeleteItem(userId uint, skus []string) error {
+	products, err := c.productRepository.FindBySKUs(skus)
+	fmt.Printf("products: %v\n", products)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(products); i++ {
+		c.cartItemRepository.DeleteByProductID(userId, products[i].ID)
+	}
+	return nil
 }

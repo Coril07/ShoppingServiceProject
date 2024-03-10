@@ -24,7 +24,7 @@ func NewCart(uid uint) *Cart {
 // Item
 type Item struct {
 	gorm.Model
-	Product   product.Product `gorm:"foreignKey:ProductID" json:"-"`
+	Product   product.Product `gorm:"foreignKey:ProductID"`
 	ProductID uint
 	Count     int
 	CartID    uint

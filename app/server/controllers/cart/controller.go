@@ -107,3 +107,22 @@ func (c *Controller) GetCart(g *gin.Context) {
 	}
 	g.JSON(200, result)
 }
+
+func (c *Controller) DeleteCart(g *gin.Context) {
+	var req DeleteRequest
+	if err := g.ShouldBind(&req); err != nil {
+		fmt.Printf("err: %v\n", err)
+		api_helper.HandleError(g, err)
+		return
+	}
+	userId := api_helper.GetUserId(g)
+	fmt.Printf("req: %v\n", req)
+	err1 := c.cartService.DeleteItem(userId, req.SKUs)
+	fmt.Printf("err1: %v\n", err1)
+	if err1 != nil {
+		api_helper.HandleError(g, err1)
+		return
+	}
+	g.JSON(http.StatusOK, "")
+
+}

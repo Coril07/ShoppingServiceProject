@@ -21,16 +21,6 @@ func NewProductController(service product.Service) *Controller {
 	}
 }
 
-// GetProducts godoc
-// @Summary 获得商品列表（分页）
-// @Tags Product
-// @Accept json
-// @Produce json
-// @Param qt query string false "Search text to find matched sku numbers and names"
-// @Param page query int false "Page number"
-// @Param pageSize query int false "Page size"
-// @Success 200 {object} pagination.Pages
-// @Router /product [get]
 func (c *Controller) GetProducts(g *gin.Context) {
 	page := pagination.NewFromGinRequest(g, -1)
 	queryText := g.Query("qt")
@@ -72,16 +62,6 @@ func (c *Controller) GetProductInfo(g *gin.Context) {
 	}
 }
 
-// CreateProduct godoc
-// @Summary 创建商品
-// @Tags Product
-// @Accept json
-// @Produce json
-// @Param Authorization  header    string  true  "Authentication header"
-// @Param CreateProductRequest body CreateProductRequest true "product information"
-// @Success 200 {object} api_helper.Response
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /product [post]
 func (c *Controller) CreateProduct(g *gin.Context) {
 	var req CreateProductRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -110,16 +90,6 @@ func (c *Controller) CreateProduct(g *gin.Context) {
 		})
 }
 
-// DeleteProduct godoc
-// @Summary 删除商品根据sku
-// @Tags Product
-// @Accept json
-// @Produce json
-// @Param DeleteProductRequest body DeleteProductRequest true "sku of product"
-// @Param Authorization header    string  true  "Authentication header"
-// @Success 200 {object} api_helper.Response
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /product [delete]
 func (c *Controller) DeleteProduct(g *gin.Context) {
 	var req DeleteProductRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -138,16 +108,6 @@ func (c *Controller) DeleteProduct(g *gin.Context) {
 	g.JSON(http.StatusOK, DeleteProductResponse{Deleteditems: t})
 }
 
-// UpdateProduct godoc
-// @Summary 更新商品更加sku
-// @Tags Product
-// @Accept json
-// @Produce json
-// @Param UpdateProductRequest body UpdateProductRequest true "product information"
-// @Param        Authorization  header    string  true  "Authentication header"
-// @Success 200 {object} CreateProductResponse
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /product [patch]
 func (c *Controller) UpdateProduct(g *gin.Context) {
 	var req UpdateProductRequest
 	if err := g.ShouldBind(&req); err != nil {

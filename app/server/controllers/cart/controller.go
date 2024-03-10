@@ -20,16 +20,6 @@ func NewCartController(service *cart.Service) *Controller {
 	}
 }
 
-// AddItem godoc
-// @Summary 添加Item
-// @Tags Cart
-// @Accept json
-// @Produce json
-// @Param        Authorization  header    string  true  "Authentication header"
-// @Param ItemCartRequest body ItemCartRequest true "product information"
-// @Success 200 {object} api_helper.Response
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /cart/item [post]
 func (c *Controller) AddItem(g *gin.Context) {
 	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -54,16 +44,6 @@ func (c *Controller) AddItem(g *gin.Context) {
 		})
 }
 
-// UpdateItem godoc
-// @Summary 更新Item
-// @Tags Cart
-// @Accept json
-// @Produce json
-// @Param        Authorization  header    string  true  "Authentication header"
-// @Param ItemCartRequest body ItemCartRequest true "product information"
-// @Success 200 {object} api_helper.Response
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /cart/item [patch]
 func (c *Controller) UpdateItem(g *gin.Context) {
 	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -88,15 +68,6 @@ func (c *Controller) UpdateItem(g *gin.Context) {
 		})
 }
 
-// GetCart godoc
-// @Summary 获得购物车商品列表
-// @Tags Cart
-// @Accept json
-// @Produce json
-// @Param        Authorization  header    string  true  "Authentication header"
-// @Success 200 {array} cart.Item
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /cart [get]
 func (c *Controller) GetCart(g *gin.Context) {
 	userId := api_helper.GetUserId(g)
 

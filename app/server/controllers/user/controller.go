@@ -29,15 +29,6 @@ func NewUserController(service *user.Service, appConfig *config.Configuration) *
 	}
 }
 
-// CreateUser godoc
-// @Summary 根据给定的用户名和密码创建用户
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param CreateUserRequest body CreateUserRequest true "user information"
-// @Success 201 {object} CreateUserResponse
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /user [post]
 func (c *Controller) CreateUser(g *gin.Context) {
 	var req CreateUserRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -58,15 +49,6 @@ func (c *Controller) CreateUser(g *gin.Context) {
 		})
 }
 
-// Login godoc
-// @Summary 通过cookie登录
-// @Tags Auth
-// @Accept cookie
-// @Produce json
-// @Param None
-// @Success 200 {object} LoginResponse
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /user/CookieLogin [get]
 func (c *Controller) CookieLogin(g *gin.Context) {
 	isadmin, _ := g.Get("isadmin")
 	val, t := isadmin.(bool)
@@ -79,15 +61,6 @@ func (c *Controller) CookieLogin(g *gin.Context) {
 
 }
 
-// Login godoc
-// @Summary 注销
-// @Tags Auth
-// @Accept
-// @Produce json
-// @Param
-// @Success 200 {object} LogoutResponse
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /user/Log_out [get]
 func (c *Controller) Log_out(g *gin.Context) {
 	g.SetCookie("Token", "", -1, "/", "localhost", false, true)
 	g.SetCookie("Username", "", -1, "/", "localhost", false, true)
@@ -96,15 +69,6 @@ func (c *Controller) Log_out(g *gin.Context) {
 	g.JSON(http.StatusOK, "")
 }
 
-// Login godoc
-// @Summary 根据用户名和密码登录
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param LoginRequest body LoginRequest true "user information"
-// @Success 200 {object} LoginResponse
-// @Failure 400  {object} api_helper.ErrorResponse
-// @Router /user/login [post]
 func (c *Controller) Login(g *gin.Context) {
 	var req LoginRequest
 	if err := g.ShouldBind(&req); err != nil {

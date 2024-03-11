@@ -14,7 +14,7 @@
             <div class="time">購入時間</div>
           </div>
           <div class="content" v-for="item in items">
-            <div class="isdeleted"><el-checkbox  size="large" style="margin-left: -3rem;" @change="HandleSeleted(item)" v-model="item.select" /></div>
+            <div class="isdeleted"><el-checkbox  size="large" style="margin-left: -3rem;" @change="HandleSeleted(item)" v-model="item.select"  /></div>
             <div v-for="sub in item.OrderedItems" style="margin-left: 8rem;">
             <div class="info" style="padding: 1rem;">
               <div class="productshow">
@@ -34,7 +34,7 @@
           </div>
         </div>
         <div id="cartfooter">
-          <div id="deleteall" @click="DeleteSelectedItems">削除</div>
+          <div id="deleteall" @click="DeleteSelectedItems">キャンセル</div>
         </div>
       </div>
   </div>
@@ -156,7 +156,7 @@ var tag=true
 
 var gs=global_state()
 onMounted(()=>{
-  updatecart()
+  updateorder()
 })
 
 const totalfee=computed(()=>{
@@ -187,46 +187,9 @@ const HandleSeleted = (item) => {
   }
   console.log(selected_items)
 }
-const HandlePay = () => {
-  var IDs=Array()
-  for (let item of selected_items.value.values()) {
-    IDs.push(item.PID)
-    }
-  ElMessageBox.confirm(
-    '支払いを確認してください',
-    'Warning',
-    {
-      confirmButtonText: 'はい',
-      cancelButtonText: 'また考えさせてください',
-      type: 'warning',
-    }
-  )
-    .then(() => {
-      axios.post('/api/order/pay',{PIDs:IDs})
-.then((response) => {
-  if(response.status==201){
-    updatecart()
-  }
-})
-.catch((error) => {
-  ElMessageBox.alert('購入が失敗しました', 'ご注意', {
-        confirmButtonText: 'OK',
-    })
-})
-      ElMessage({
-        type: 'success',
-        message: 'completed',
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'canceled',
-      })
-    })
-}
 
-const updatecart= () => {
+
+const updateorder= () => {
   axios.get('/api/order/get')
 .then((response) => {
   if(response.status==200){
@@ -250,9 +213,9 @@ const updatecart= () => {
 }
 
 const DeleteSelectedItems = () => {
-  var skus=Array()
+  var IDs=Array()
   for (let item of selected_items.value.values()) {
-    skus.push(item.SKU)
+    IDs.push(item)
     }
   ElMessageBox.confirm(
     'そうしたら、選んだアイテムが買い物かごから削除されました。もう一度確認してください',
@@ -266,15 +229,15 @@ const DeleteSelectedItems = () => {
     .then(() => {
       axios.delete('/api/order/delete',{
     params: {
-      skus: skus
+      orderIds: IDs
   },
   paramsSerializer: params => {
     return qs.stringify(params, {arrayFormat: 'repeat'})
   }
 } )
 .then((response) => {
-  if(response.status==200){
-    updatecart()
+  if(response.status==201){
+    updateorder()
   }
 })
 .catch((error) => {

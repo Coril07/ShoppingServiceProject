@@ -4,7 +4,11 @@ import (
 	"app/server/domain/cart"
 	"app/server/domain/product"
 	"app/server/utils/pagination"
+	"encoding/json"
+	"fmt"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var day14ToHours float64 = 336
@@ -65,21 +69,35 @@ func (c *Service) CompleteOrder(userId uint, pids []int64) error {
 }
 
 // 取消订单
-func (c *Service) CancelOrder(uid, oid uint) error {
-	currentOrder, err := c.orderRepository.FindByOrderID(oid)
-	if err != nil {
-		return err
-	}
-	if currentOrder.UserID != uid {
-		return ErrInvalidOrderID
-	}
-	if currentOrder.CreatedAt.Sub(time.Now()).Hours() > day14ToHours {
-		return ErrCancelDurationPassed
-	}
-	currentOrder.IsCanceled = true
-	err = c.orderRepository.Update(*currentOrder)
+func (c *Service) CancelOrder(uid uint, oids []json.Number) error {
+	for i := 0; i < len(oids); i++ {
+		oid, err1 := oids[i].Int64()
+		if err1 != nil {
+			return err1
+		} else {
+			fmt.Printf("oid: %v\n", oid)
+			err0 := c.orderRepository.db.Transaction(func(tx *gorm.DB) error {
+				currentOrder, err := c.orderRepository.FindByOrderID(uint(oid))
+				if err != nil {
+					return err
+				}
+				fmt.Printf("currentOrder: %v\n", currentOrder)
+				if currentOrder.UserID != uid {
+					return ErrInvalidOrderID
+				}
+				if currentOrder.CreatedAt.Sub(time.Now()).Hours() > day14ToHours {
+					return ErrCancelDurationPassed
+				}
+				currentOrder.IsCanceled = true
+				err = c.orderRepository.Update(*currentOrder)
 
-	return err
+				return err
+			})
+			return err0
+		}
+	}
+
+	return nil
 }
 
 // 获得订单

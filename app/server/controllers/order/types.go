@@ -9,5 +9,5 @@ type CompleteOrderRequest struct {
 
 // 取消订单
 type CancelOrderRequest struct {
-	OrderId uint `json:"orderId"`
+	OrderIds []json.Number `json:"orderIds" form:"orderIds"`
 }

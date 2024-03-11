@@ -87,7 +87,6 @@ func (order *Order) BeforeUpdate(tx *gorm.DB) (err error) {
 			if err := tx.Where("ID = ?", item.ProductID).First(&currentProduct).Error; err != nil {
 				return err
 			}
-
 			// 计算新的库存数量
 			newStockCount := currentProduct.StockCount + item.Count
 			// 将新的库存数量更新到数据库中

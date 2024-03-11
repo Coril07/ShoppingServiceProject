@@ -57,7 +57,8 @@ func (c *Controller) CancelOrder(g *gin.Context) {
 		return
 	}
 	userId := api_helper.GetUserId(g)
-	err := c.orderService.CancelOrder(userId, req.OrderId)
+	fmt.Printf("req: %v\n", req)
+	err := c.orderService.CancelOrder(userId, req.OrderIds)
 	if err != nil {
 		api_helper.HandleError(g, err)
 		return

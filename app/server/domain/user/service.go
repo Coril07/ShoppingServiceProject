@@ -1,6 +1,9 @@
 package user
 
-import "app/server/utils/hash"
+import (
+	"app/server/utils/hash"
+	"fmt"
+)
 
 // 用户service结构体
 type Service struct {
@@ -34,6 +37,7 @@ func (c *Service) Create(user *User) error {
 		return ErrInvalidPassword
 	}
 	// 创建用户
+	fmt.Printf("user: %v\n", user)
 	err = c.r.Create(user)
 	return err
 }
@@ -51,8 +55,25 @@ func (c *Service) GetUser(username string, password string) (User, error) {
 	return user, nil
 }
 
+func (c *Service) GetUserByID(uid uint) (User, error) {
+	user, err := c.r.GetByID(uid)
+	return user, err
+}
+
 // 更新用户
 
 func (c *Service) UpdateUser(user *User) error {
+	if user.Password != user.Password2 {
+		return ErrMismatchedPasswords
+	}
+	// 无效密码
+	if ValidatePassword(user.Password) {
+		return ErrInvalidPassword
+	}
+	return c.r.Update(user)
+}
+
+// 添加用户
+func (c *Service) AddUser(user *User) error {
 	return c.r.Update(user)
 }

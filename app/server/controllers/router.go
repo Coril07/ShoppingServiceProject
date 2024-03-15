@@ -99,7 +99,9 @@ func RegisterUserHandlers(r *gin.Engine, dbs Databases) {
 	userGroup.POST("/sign", userController.CreateUser)
 	userGroup.POST("/login", userController.Login)
 	userGroup.GET("/cookielogin", middleware.AuthUserMiddleware(AppConfig.SecretKey), userController.CookieLogin)
+	userGroup.GET("/getuserinfo", middleware.AuthUserMiddleware(AppConfig.SecretKey), userController.GetUser)
 	userGroup.GET("/log_out", middleware.AuthUserMiddleware(AppConfig.SecretKey), userController.Log_out)
+	userGroup.POST("/update", middleware.AuthUserMiddleware(AppConfig.SecretKey), userController.UpdateUser)
 
 }
 

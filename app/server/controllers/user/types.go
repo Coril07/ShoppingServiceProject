@@ -37,3 +37,22 @@ type LoginResponse struct {
 	Token    string `json:"token"`
 	IsAdmin  bool   `json:"isadmin"`
 }
+
+type GetInfoResponse struct {
+	Username string    `josn:"username"`
+	Gender   string    `josn:"gender"`
+	Birth    time.Time `josn:"birth"`
+	Email    string    `josn:"email"`
+	Address  string    `josn:"address"`
+}
+
+type UpdateUserRequest struct {
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Password2 string    `json:"password2"`
+	Gender    string    `json:"gender"`
+	Birth     time.Time `json:"birth"`
+	Url       string    `json:"url"`
+	Email     string    `json:"email"`
+	Address   string    `json:"address"`
+}

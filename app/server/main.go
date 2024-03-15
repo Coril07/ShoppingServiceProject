@@ -12,13 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @title 电商项目
-// @description 电商项目
-// @version 1.0
-// @contact.name GE MINGXUAN
-
-// @host localhost:8080
-// @BasePath /
+// main アプリケーションの入口
 func main() {
 	r := gin.Default()
 	registerMiddlewares(r)
@@ -27,7 +21,7 @@ func main() {
 
 }
 
-// 注册中间件
+// ミドルウェアの登録
 func registerMiddlewares(r *gin.Engine) {
 	r.Use(
 		gin.LoggerWithFormatter(

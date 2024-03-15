@@ -7,6 +7,7 @@ import admin from "./views/admin.vue";
 import product from "./views/product.vue";
 import cart from "./views/cart.vue";
 import order from "./views/order.vue";
+import personalfile from "./views/personalfile.vue";
 const routes = [
   {
     path: "/",
@@ -39,6 +40,10 @@ const routes = [
   {
     path: "/order",
     component: order,
+  },
+  {
+    path: "/personalfile",
+    component: personalfile,
   }
 ];
 

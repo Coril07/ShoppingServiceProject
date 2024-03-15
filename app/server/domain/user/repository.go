@@ -43,6 +43,15 @@ func (r *Repository) GetByName(name string) (User, error) {
 	return user, nil
 }
 
+func (r *Repository) GetByID(uid uint) (User, error) {
+	var user User
+	err := r.db.Where("ID = ?", uid).Where("IsDeleted = ?", 0).First(&user).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}
+
 // 更新用户
 func (r *Repository) Update(u *User) error {
 	return r.db.Save(&u).Error

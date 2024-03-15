@@ -34,7 +34,7 @@
           </div>
         </div>
         <div id="cartfooter">
-          <div id="deleteall" @click="DeleteSelectedItems">キャンセル</div>
+          <div id="deleteall" @click="DeleteSelectedItems">注文をキャンセル</div>
         </div>
       </div>
   </div>

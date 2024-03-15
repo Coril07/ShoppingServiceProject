@@ -13,7 +13,7 @@
             <el-menu-item index="/admin" v-show="isadmin">商品管理</el-menu-item>
             <el-sub-menu index="3" v-show="islogin"> 
               <template #title>会員メニュー</template>
-              <el-menu-item index="3-1">会員情報</el-menu-item>
+              <el-menu-item index="/personalfile">会員情報</el-menu-item>
               <el-menu-item index="/log_out">ログアウト</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="/login" v-show="!islogin">ログイン</el-menu-item>

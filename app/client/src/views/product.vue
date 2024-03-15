@@ -33,7 +33,7 @@
         <div style="display: flex; flex-direction: column; align-items: center;">
             <el-input-number v-model="num" :min="1" :max="100" />
             <div style="margin-top: 2rem;">
-            <el-button type="success" @click="handleClick">買い物に入れて</el-button>
+            <el-button type="success" @click="handleClick">買い物かごにいれる</el-button>
             <el-button type="info" @click="handleCancel">キャンセル</el-button>
             </div>
 

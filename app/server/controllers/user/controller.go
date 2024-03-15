@@ -35,7 +35,6 @@ func (c *Controller) CreateUser(g *gin.Context) {
 		api_helper.HandleError(g, api_helper.ErrInvalidBody)
 		return
 	}
-	fmt.Printf("req: %v\n", req)
 	newUser := user.NewUser(req.Username, req.Password, req.Password2, req.Gender, req.Birth, req.Url, req.Email, req.Address)
 	err := c.userService.Create(newUser)
 	if err != nil {
@@ -94,8 +93,9 @@ func (c *Controller) Login(g *gin.Context) {
 				"isAdmin": currentUser.IsAdmin,
 			})
 		token := jwtHelper.GenerateToken(jwtClaims, c.appConfig.SecretKey)
+		fmt.Printf("token: %v\n", token)
 		currentUser.Token = token
-		err = c.userService.UpdateUser(&currentUser)
+		err = c.userService.AddUser(&currentUser)
 		if err != nil {
 			api_helper.HandleError(g, err)
 			return
@@ -103,8 +103,6 @@ func (c *Controller) Login(g *gin.Context) {
 	}
 	g.SetCookie("Token", currentUser.Token, 60*60, "/", "localhost", false, true)
 	g.SetCookie("Username", currentUser.Username, 60*60, "/", "localhost", false, true)
-	session := sessions.Default(g)
-	session.Set(currentUser.Token, currentUser.Username)
 	g.JSON(
 		http.StatusOK, LoginResponse{Username: currentUser.Username, UserId: currentUser.ID, IsAdmin: currentUser.IsAdmin})
 }
@@ -116,4 +114,42 @@ func (c *Controller) VerifyToken(g *gin.Context) {
 
 	g.JSON(http.StatusOK, decodedClaims)
 
+}
+
+func (c *Controller) UpdateUser(g *gin.Context) {
+	// uid := api_helper.GetUserId(g)
+	var info UpdateUserRequest
+	err0 := g.ShouldBind(&info)
+	if err0 != nil {
+		api_helper.HandleError(g, err0)
+		return
+	}
+	uid := api_helper.GetUserId(g)
+	u, err := c.userService.GetUserByID(uid)
+	u.Password = info.Password
+	u.Password2 = info.Password2
+	u.Birth = info.Birth
+	u.Address = info.Address
+	u.Email = info.Email
+	u.Gender = info.Gender
+	if err != nil {
+		api_helper.HandleError(g, err)
+		return
+	}
+	err1 := c.userService.UpdateUser(&u)
+	if err1 != nil {
+		api_helper.HandleError(g, err1)
+		return
+	}
+	g.JSON(http.StatusCreated, "")
+}
+
+func (c *Controller) GetUser(g *gin.Context) {
+	uid := api_helper.GetUserId(g)
+	u, err := c.userService.GetUserByID(uid)
+	if err != nil {
+		api_helper.HandleError(g, err)
+		return
+	}
+	g.JSON(http.StatusOK, GetInfoResponse{Username: u.Username, Gender: u.Gender, Address: u.Address, Birth: u.Birth, Email: u.Email})
 }

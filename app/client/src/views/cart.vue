@@ -193,7 +193,7 @@ const HandlePay = () => {
     IDs.push(item.PID)
     }
   ElMessageBox.confirm(
-    '支払いを確認してください',
+    '商品を購入しますか',
     'Warning',
     {
       confirmButtonText: 'はい',

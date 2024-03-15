@@ -46,13 +46,13 @@ app
 │      │      iphone15ケースwafwaf.jpg
 │      │      logo.png
 │      │      Microsoft QZI-00020 Surface Laptop 5.jpg
-│      │      ぱいぱい茶ぱいぱい.jpg
+│      │      センブリ茶.jpg
 │      │      冷蔵庫.webp
 │      │      冷蔵庫test0.webp
 │      │      如果如果.txt
 │      │      柴犬.jpg
 │      │      柴犬test.jpg
-│      │      茶.jpg
+│      │      プーアル茶.jpg
 │      │      辛いもの.jpg
 │      │      辛いもの２.jpg
 │      │      

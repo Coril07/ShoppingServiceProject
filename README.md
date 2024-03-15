@@ -13,7 +13,7 @@ app
 │  go.sum
 │  package-lock.json
 │  package.json
-│  shopping_pro.sql
+│  shopping_pro.sql　　//sqlファイル
 │  
 ├─client
 │  │  env.d.ts
